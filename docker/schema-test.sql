@@ -1,34 +1,31 @@
-CREATE TABLE asset (
+CREATE TABLE blogpost (
       id INTEGER primary key,
-      code TEXT,
       title TEXT,
-      type ARRAY(TEXT),
+      body TEXT,
+      categories ARRAY(TEXT),
       created_at TIMESTAMP WITHOUT TIME ZONE,
       metadata ARRAY(OBJECT(DYNAMIC) AS (
-          id INTEGER,
           key TEXT,
-          value TEXT
+          value ARRAY(TEXT)
       )),
       location GEO_SHAPE,
-      active BOOLEAN
+      archived BOOLEAN
 );
 
-insert into asset (id, code, title, type, created_at, metadata, geometry, active) values (
+insert into blogpost (id, title, body, categories, created_at, metadata, location, archived) values (
   1,
-  'test code',
   'test title',
-  ['financial']
+  'This is a body test text'
+  ['food', 'travel']
   '2021-03-09',
   [
     {
-      "id" = 1,
-      "key" = 'key1',
-      "value" = 'value1'
+      "key" = 'country',
+      "value" = ['philippines']
     },
     {
-      "id" = 1,
-      "key" = 'key1',
-      "value" = 'value1'
+      "key" = 'food',
+      "value" = ['halo-halo', 'empanada']
     }
   ],
   {
@@ -36,66 +33,62 @@ insert into asset (id, code, title, type, created_at, metadata, geometry, active
     coordinates = [
       [
         [
-          -8.4375,
-          43.13306116240612
+            120.32226562500001,
+            19.518375478601566
         ],
         [
-          -9.140625,
-          37.23032838760387
+            116.01562499999999,
+            7.536764322084078
         ],
         [
-          -2.197265625,
-          36.527294814546245
+            125.90332031249999,
+            4.915832801313164
         ],
         [
-          2.724609375,
-          42.48830197960227
+            128.2763671875,
+            7.667441482726068
         ],
         [
-          -8.4375,
-          43.13306116240612
+            123.04687499999999,
+            19.642587534013032
+        ],
+        [
+            120.32226562500001,
+            19.518375478601566
         ]
       ]
     ]
   },
-  true
+  false
 );
-SELECT * FROM asset ORDER BY id;
-SELECT * FROM asset
-WHERE match(geometry, {
+SELECT * FROM blogpost ORDER BY id;
+SELECT * FROM blogpost
+WHERE match(location, {
   type='Polygon',
   coordinates=[
     [
-      [
-        0.62896728515625,
-        41.634305152774054
-      ],
-      [
-        0.608367919921875,
-        41.6244253119973
-      ],
-      [
-        0.5968666076660156,
-        41.6055595934195
-      ],
-      [
-        0.6396102905273438,
-        41.59015491609044
-      ],
-      [
-        0.6753158569335938,
-        41.60735656626029
-      ],
-      [
-        0.6499099731445312,
-        41.63597302844412
-      ],
-      [
-        0.62896728515625,
-        41.634305152774054
-      ]
+        [
+            120.90179443359375,
+            14.505155836749273
+        ],
+        [
+            121.1407470703125,
+            14.505155836749273
+        ],
+        [
+            121.1407470703125,
+            14.676596946649664
+        ],
+        [
+            120.90179443359375,
+            14.676596946649664
+        ],
+        [
+            120.90179443359375,
+            14.505155836749273
+        ]
     ]
   ]
 });
-DELETE FROM asset where id = 1;
-DROP TABLE asset;
+DELETE FROM blogpost where id = 1;
+DROP TABLE blogpost;
