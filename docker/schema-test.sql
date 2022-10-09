@@ -4,28 +4,30 @@ CREATE TABLE blogpost (
       body TEXT,
       categories ARRAY(TEXT),
       created_at TIMESTAMP WITHOUT TIME ZONE,
-      metadata ARRAY(OBJECT(DYNAMIC) AS (
-          key TEXT,
-          value ARRAY(TEXT)
+      tags ARRAY(TEXT),
+      categories ARRAY(OBJECT(DYNAMIC) AS (
+          name TEXT,
+          values ARRAY(TEXT)
       )),
       location GEO_SHAPE,
       archived BOOLEAN
 );
 
-insert into blogpost (id, title, body, categories, created_at, metadata, location, archived) values (
+insert into blogpost (id, title, body, categories, created_at, tags, metadata, location, archived) values (
   1,
   'test title',
   'This is a body test text'
   ['food', 'travel']
   '2021-03-09',
+  ['travel', 'philippines', 'food'],
   [
     {
-      "key" = 'country',
-      "value" = ['philippines']
+      "name" = 'country',
+      "values" = ['philippines']
     },
     {
-      "key" = 'food',
-      "value" = ['halo-halo', 'empanada']
+      "name" = 'food',
+      "values" = ['halo-halo', 'empanada']
     }
   ],
   {
