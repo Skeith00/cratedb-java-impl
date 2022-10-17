@@ -8,6 +8,14 @@ group = 'com.blog'
 version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '17'
 
+def crateJdbcVersion = '2.6.0'
+
+def springDataVersion = '2.7.3'
+def springVersion = '5.3.23'
+def hibernateVersion = '8.0.0.Final'
+def javaValidationVersion = '2.0.1.Final'
+
+
 repositories {
 	mavenCentral()
 	maven { url 'https://repo.spring.io/milestone' }
@@ -15,8 +23,17 @@ repositories {
 }
 
 dependencies {
+	// Crate client
 	implementation "org.springframework.boot:spring-boot-starter"
 	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "io.crate:crate-jdbc:${crateJdbcVersion}"
+	//implementation "org.springframework:spring-core:${springVersion}"
+	//implementation "org.springframework:spring-context:${springVersion}"
+	//implementation "org.springframework:spring-tx:${springVersion}"
+	//implementation "org.springframework.data:spring-data-commons:${springDataVersion}"
+	//implementation "javax.validation:validation-api:${javaValidationVersion}"
+	//implementation "org.hibernate:hibernate-validator:${hibernateVersion}"
+
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
 

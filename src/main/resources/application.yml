@@ -1,1 +1,7 @@
-
+application:
+  resources:
+    database:
+      url: jdbc:crate://localhost:5432/
+      schema: blog
+      user: crate
+      password:
