@@ -24,16 +24,18 @@ repositories {
 
 dependencies {
 	// Crate client
+	compileOnly "org.projectlombok:lombok:1.18.24"
+
 	implementation "org.springframework.boot:spring-boot-starter"
 	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-data-jdbc"
 	implementation "io.crate:crate-jdbc:${crateJdbcVersion}"
-	//implementation "org.springframework:spring-core:${springVersion}"
-	//implementation "org.springframework:spring-context:${springVersion}"
-	//implementation "org.springframework:spring-tx:${springVersion}"
-	//implementation "org.springframework.data:spring-data-commons:${springDataVersion}"
-	//implementation "javax.validation:validation-api:${javaValidationVersion}"
-	//implementation "org.hibernate:hibernate-validator:${hibernateVersion}"
+	//implementation "org.postgresql:postgresql:42.5.0"
+	implementation "com.zaxxer:HikariCP:5.0.1"
 
+	testCompileOnly "org.projectlombok:lombok:1.18.24"
+	annotationProcessor "org.projectlombok:lombok:1.18.24"
+	testAnnotationProcessor "org.projectlombok:lombok:1.18.24"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
 

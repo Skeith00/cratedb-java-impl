@@ -1,34 +1,62 @@
 package com.blog.api.configuration;
 
 import com.blog.api.configuration.properties.DBProperties;
-import io.crate.shade.org.postgresql.ds.PGConnectionPoolDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import io.crate.client.jdbc.CrateDriver;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.relational.core.dialect.AnsiDialect;
+import org.springframework.data.relational.core.dialect.Dialect;
+import org.springframework.data.relational.core.dialect.PostgresDialect;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
 
+//https://spring.io/blog/2020/05/20/migrating-to-spring-data-jdbc-2-0
 @Configuration
-public class DBConfig {
+@EnableJdbcRepositories(basePackages = "com.blog.api.repository")
+public class DBConfig extends AbstractJdbcConfiguration {
+
+    private static final String QUALIFIER = "search";
 
     @Bean
-    public DataSource dataSource(DBProperties dbProperties) throws SQLException {
-        PGConnectionPoolDataSource dataSource = new PGConnectionPoolDataSource();
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
-        dataSource.setUrl(dbProperties.url());
-        dataSource.setUsername(dbProperties.user());
-        dataSource.setPassword("");
-
-        Properties properties = new Properties();
-        properties.put("user", dbProperties.user());
-        Connection conn = DriverManager.getConnection(
-                dbProperties.url(), properties
-        );
-        conn.setSchema( dbProperties.schema());
-        return conn;
+    @Qualifier(QUALIFIER)
+    public DataSource dataSource(DBProperties dbProperties) {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(dbProperties.url());
+        config.setUsername(dbProperties.user());
+        config.setPassword(dbProperties.password());
+        config.setSchema(dbProperties.schema());
+        config.setDriverClassName(CrateDriver.class.getName());
+        //config.addDataSourceProperty("prepStmtCacheSize", "250");
+        return new HikariDataSource(config);
     }
+
+
+    @Override
+    public Dialect jdbcDialect(NamedParameterJdbcOperations operations) {
+        return PostgresDialect.INSTANCE;
+    }
+
+    @Bean
+    public NamedParameterJdbcOperations namedParameterJdbcOperations(DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Bean
+    @Qualifier(QUALIFIER)
+    public PlatformTransactionManager transactionManager(DataSource dataSource){
+        return new DataSourceTransactionManager(dataSource);
+    }
+
 }
