@@ -1,0 +1,8 @@
+application:
+  resources:
+    database:
+      url: crate://localhost:5432/
+      #url: jdbc:postgresql://localhost:5432/
+      schema: blog
+      user: crate
+      password:

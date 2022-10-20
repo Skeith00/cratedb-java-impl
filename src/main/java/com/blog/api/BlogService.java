@@ -25,6 +25,7 @@ public class BlogService {
         post.setCreatedAt(Instant.now());
         post.setTags(List.of("foodie", "paella"));
         post.setMetadata(List.of(new Metadata("country", List.of("Spain"))));
+        //post.setMetadata(List.of(new Metadata("country", List.of("Spain"))));
         post.setArchived(false);
         blogRepository.save(post);
     }

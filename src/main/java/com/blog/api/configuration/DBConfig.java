@@ -1,18 +1,17 @@
 package com.blog.api.configuration;
 
 import com.blog.api.configuration.properties.DBProperties;
+import com.blog.api.model.converter.MetadataConverter;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.crate.client.jdbc.CrateDriver;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.data.relational.core.dialect.AnsiDialect;
 import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.data.relational.core.dialect.PostgresDialect;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -21,6 +20,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 //https://spring.io/blog/2020/05/20/migrating-to-spring-data-jdbc-2-0
 @Configuration
@@ -42,7 +43,6 @@ public class DBConfig extends AbstractJdbcConfiguration {
         return new HikariDataSource(config);
     }
 
-
     @Override
     public Dialect jdbcDialect(NamedParameterJdbcOperations operations) {
         return PostgresDialect.INSTANCE;
@@ -59,4 +59,12 @@ public class DBConfig extends AbstractJdbcConfiguration {
         return new DataSourceTransactionManager(dataSource);
     }
 
+
+    @Bean
+    public JdbcCustomConversions jdbcCustomConversions() {
+        final List<Converter<?, ?>> converters = new ArrayList<>();
+        converters.add(MetadataConverter.EntityWritingConverter.INSTANCE);
+        converters.add(MetadataConverter.EntityReadingConverter.INSTANCE);
+        return new JdbcCustomConversions(converters);
+    }
 }

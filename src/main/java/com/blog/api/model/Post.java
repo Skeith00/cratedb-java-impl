@@ -24,7 +24,8 @@ public class Post /*implements Persistable<Integer>*/ {
     private Instant createdAt;
     private List<String> tags = new ArrayList<>();
 
-    private List<Metadata> metadata = new ArrayList<>();
+    @Column("metadata")
+    private List<Metadata> metadata;
     //location GEO_SHAPE,
     private boolean archived;
 
